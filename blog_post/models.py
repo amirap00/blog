@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
-
+from django.utils.text import slugify
 
 # unique_for_date='pub_date'
 
@@ -37,11 +37,20 @@ class Article(models.Model):
     update = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=True)
     # به جای ایدی به ما یک نوشته با معنی نشان میدهد
-    slug = models.SlugField(null=True, unique=True)
-
+    slug = models.SlugField(null=True, blank=True, unique=True)
     objects = models.Manager()
     custom_manager = CustomManager()
     # pub_date = models.DateField(default=timezone.now)
+
+
+    # class Meta:
+    #     ordering = ('-date',)
+
+
+    # با این کار به جای پر کردن slug  به صورت دستی title به صورت خودکار جایگزین slug میشود و به جای space از dash استفاده میکند
+    def save(self):
+        self.slug = slugify(self.title)
+        super(Article, self).save()
 
     def get_absolute_url(self):
         return reverse('blog_post:article_detail', args=[self.slug])
