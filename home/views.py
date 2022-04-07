@@ -6,4 +6,6 @@ def home(request):
     # print(Article.objects.counter())
     # articles = Article.objects.filter(status=True)
     articles = Article.custom_manager.all()
+    # recent_articles = Article.objects.all()[:3]
+    # recent_articles = Article.objects.all().order_by('-date')
     return render(request, 'home_app/index.html', {'articles': articles})
